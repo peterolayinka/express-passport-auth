@@ -18,6 +18,7 @@ passport.use(new LocalStrategy(
     (email, password, done)=>{
         axios.get(`http://localhost:5000/users?email=${email}`)
             .then(res=>{
+                console.log(res)
                 const user = res.users[0]
                 if(!user){
                     return done(null, false, {message: "Invalid credentials. \n"});
