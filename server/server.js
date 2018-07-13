@@ -18,8 +18,7 @@ passport.use(new LocalStrategy(
     (email, password, done)=>{
         axios.get(`http://localhost:5000/users?email=${email}`)
             .then(res=>{
-                console.log(res)
-                const user = res.users[0]
+                const user = res.data[0]
                 if(!user){
                     return done(null, false, {message: "Invalid credentials. \n"});
                 }
@@ -88,7 +87,8 @@ app.post("/login", (req, res, next)=>{
         if(info){return res.send(info.message);}
         else if(err){return next(err);}
         else if (!user){return res.redirect('/login')}
-        req.login(user, err => {
+        req.login(user, (err) => {
+            console.log(user, err)
             if (err) {
                 return next(err);
             }
@@ -101,6 +101,13 @@ app.post("/login", (req, res, next)=>{
 app.get('/authorised', (req, res)=>{
     if (req.isAuthenticated()){
         res.send('you are already logged in. #wink')
+    }else{
+        res.redirect('/')
+    }
+})
+app.get('/log-out/', (req, res)=>{
+    if (req.isAuthenticated()){
+        req.logout()
     }else{
         res.redirect('/')
     }
